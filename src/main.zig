@@ -1,6 +1,6 @@
 const std = @import("std");
 const sdl = @import("sdl2");
-const display = @import("display.zig");
+const Display = @import("Display.zig");
 
 pub fn main() !void {
     try sdl.init(.{
@@ -10,8 +10,10 @@ pub fn main() !void {
     });
     defer sdl.quit();
 
-    const d = try display.init();
-    defer d.destroy();
+    var display = Display{};
+
+    try display.init();
+    defer display.destroy();
 
     mainLoop: while (true) {
         while (sdl.pollEvent()) |ev| {
@@ -21,6 +23,6 @@ pub fn main() !void {
             }
         }
 
-        try d.render();
+        try display.render();
     }
 }

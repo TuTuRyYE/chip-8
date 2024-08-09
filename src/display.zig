@@ -1,34 +1,34 @@
 const std = @import("std");
 const sdl2 = @import("sdl2");
 
-const PIXEL_SIZE: u8 = 10;
-const DISPLAY_WIDTH: u16 = 64;
-const DISPLAY_HEIGHT: u16 = 32;
-const DISPLAY_SIZE: u16 = DISPLAY_WIDTH * DISPLAY_HEIGHT;
+pub const Display = @This();
 
-pub const Display = struct {
-    pixels: [DISPLAY_SIZE]bool,
-    window: sdl2.Window,
-    renderer: sdl2.Renderer,
+pub const PIXEL_SIZE: u8 = 10;
+pub const WIDTH: usize = 64;
+pub const HEIGHT: usize = 32;
+const SIZE: usize = WIDTH * HEIGHT;
 
-    pub fn render(d: Display) !void {
-        try d.renderer.setColorRGB(0xF7, 0xA4, 0x1D);
-        try d.renderer.clear();
+pixels: [SIZE]bool = [_]bool{false} ** SIZE,
 
-        d.renderer.present();
-    }
+window: sdl2.Window = undefined,
+renderer: sdl2.Renderer = undefined,
 
-    pub fn destroy(d: Display) void {
-        d.renderer.destroy();
-        d.window.destroy();
-    }
-};
+pub fn init(d: *Display) !void {
+    const windowWidth = WIDTH * PIXEL_SIZE;
+    const windowHeight = HEIGHT * PIXEL_SIZE;
 
-pub fn init() !Display {
-    const windowWidth = DISPLAY_WIDTH * PIXEL_SIZE;
-    const windowHeight = DISPLAY_HEIGHT * PIXEL_SIZE;
+    d.window = try sdl2.createWindow("CHIP-8 Emulator", .{ .centered = {} }, .{ .centered = {} }, windowWidth, windowHeight, .{ .vis = .shown });
+    d.renderer = try sdl2.createRenderer(d.window, null, .{ .accelerated = true });
+}
 
-    const window = try sdl2.createWindow("CHIP-8 Emulator", .{ .centered = {} }, .{ .centered = {} }, windowWidth, windowHeight, .{ .vis = .shown });
-    const renderer = try sdl2.createRenderer(window, null, .{ .accelerated = true });
-    return Display{ .pixels = [_]bool{false} ** DISPLAY_SIZE, .window = window, .renderer = renderer };
+pub fn destroy(d: *Display) void {
+    d.renderer.destroy();
+    d.window.destroy();
+}
+
+pub fn render(d: Display) !void {
+    try d.renderer.setColorRGB(0xF7, 0xA4, 0x1D);
+    try d.renderer.clear();
+
+    d.renderer.present();
 }
