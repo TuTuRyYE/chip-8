@@ -1,6 +1,7 @@
 const std = @import("std");
 const sdl = @import("sdl2");
 const Display = @import("Display.zig");
+const Emulator = @import("emulator.zig");
 
 pub fn main() !void {
     try sdl.init(.{
@@ -14,6 +15,9 @@ pub fn main() !void {
 
     try display.init();
     defer display.destroy();
+
+    var emu = Emulator{};
+    emu.init(&display);
 
     mainLoop: while (true) {
         while (sdl.pollEvent()) |ev| {

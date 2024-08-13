@@ -26,9 +26,26 @@ pub fn destroy(d: *Display) void {
     d.window.destroy();
 }
 
-pub fn render(d: Display) !void {
-    try d.renderer.setColorRGB(0xF7, 0xA4, 0x1D);
-    try d.renderer.clear();
+pub fn render(d: *Display) !void {
+    var i: usize = 0;
+    var color = sdl2.Color.black;
+    while (i < SIZE) {
+        color = if (d.pixels[i]) sdl2.Color.white else sdl2.Color.black;
+        try d.renderer.setColor(color);
+
+        const x = i % WIDTH;
+        const y = (i - x) / WIDTH;
+
+        const pixel: sdl2.Rectangle = .{
+            .x = @intCast(x * PIXEL_SIZE),
+            .y = @intCast(y * PIXEL_SIZE),
+            .height = PIXEL_SIZE,
+            .width = PIXEL_SIZE,
+        };
+        try d.renderer.fillRect(pixel);
+
+        i += 1;
+    }
 
     d.renderer.present();
 }
