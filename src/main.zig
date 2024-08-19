@@ -19,7 +19,7 @@ pub fn main() !void {
     var data: [0x1000]u8 = [_]u8{0} ** 0x1000;
 
     // Open the file from the current working directory
-    var file = try std.fs.cwd().openFile("files/IBMLogo.ch8", .{ .mode = .read_only });
+    var file = try std.fs.cwd().openFile("files/test_opcode.ch8", .{ .mode = .read_only });
     defer file.close();
 
     const f_reader = file.reader();
@@ -37,7 +37,7 @@ pub fn main() !void {
             }
         }
 
-        std.time.sleep(300_000_000);
+        std.time.sleep(10_000_000);
 
         const instruction = try emu.fetch();
 
@@ -45,4 +45,6 @@ pub fn main() !void {
 
         try display.render();
     }
+
+    emu.deinit();
 }
